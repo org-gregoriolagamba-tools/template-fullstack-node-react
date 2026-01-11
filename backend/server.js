@@ -23,25 +23,44 @@ app.use(cors());
 app.use(express.json());
 
 // Static asset serving: prefer a production React build if present
-// (frontend/build). If not present, fall back to a `public` folder
-// inside the backend (useful for small demos).
-const frontendBuildPath = path.join(process.cwd(), "frontend", "build");
-const backendPublicPath = path.join(process.cwd(), "backend", "public");
+// (frontend/build). We check several likely locations so the backend
+// can be started either from the repo root or from the `backend` folder.
+const candidateFrontendBuildPaths = [
+  path.join(process.cwd(), "frontend", "build"), // when started from repo root
+  path.join(process.cwd(), "..", "frontend", "build"), // when started from backend dir
+  path.join(process.cwd(), "backend", "frontend", "build"), // less common layout
+];
 
-if (fs.existsSync(frontendBuildPath)) {
-  // Serve the React production build
-  app.use(express.static(frontendBuildPath));
-  // Serve index.html for SPA routing
-  app.get("/", (req, res) => {
-    res.sendFile(path.join(frontendBuildPath, "index.html"));
-  });
-} else if (fs.existsSync(backendPublicPath)) {
-  // Fallback: serve backend/public if it exists
-  app.use(express.static(backendPublicPath));
-  app.get("/", (req, res) => {
-    res.sendFile(path.join(backendPublicPath, "index.html"));
-  });
-} else {
+const candidateBackendPublicPaths = [
+  path.join(process.cwd(), "backend", "public"),
+  path.join(process.cwd(), "public"),
+  path.join(process.cwd(), "..", "backend", "public"),
+];
+
+let served = false;
+for (const fb of candidateFrontendBuildPaths) {
+  if (fs.existsSync(fb)) {
+    app.use(express.static(fb));
+    app.get("/", (req, res) => res.sendFile(path.join(fb, "index.html")));
+    served = true;
+    console.log(`Serving frontend from ${fb}`);
+    break;
+  }
+}
+
+if (!served) {
+  for (const bp of candidateBackendPublicPaths) {
+    if (fs.existsSync(bp)) {
+      app.use(express.static(bp));
+      app.get("/", (req, res) => res.sendFile(path.join(bp, "index.html")));
+      served = true;
+      console.log(`Serving backend public from ${bp}`);
+      break;
+    }
+  }
+}
+
+if (!served) {
   // No static assets found — keep a simple health route instead
   app.get("/", (req, res) => {
     res.send("Backend running. Build frontend separately during development.");
@@ -56,7 +75,7 @@ if (fs.existsSync(frontendBuildPath)) {
 // ------------------------
 // Middleware functions
 // ------------------------
-// Add any custom middleware (authentication, logging, etc.) here.
+// Add any custom middleware (authentication, logging, functions, etc.) here.
 
 // ------------------------
 // API Routes

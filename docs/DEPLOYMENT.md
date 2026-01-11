@@ -40,6 +40,27 @@ npm start
 
 - Configure Nginx to proxy `/api` and WebSocket routes to the backend process and serve static files from the backend server or directly from `frontend/build`.
 
+### Start directory and static-serving behavior
+
+- Recommended: run build from the repo root (`npm run build`) and start the backend using the root `start` script (`npm run start`) so paths resolve consistently.
+- The backend now detects `frontend/build` in multiple locations so it can be started either from the repo root or from the `backend` folder. It checks these locations (examples):
+	- `$(repo-root)/frontend/build` (when started from repo root)
+	- `$(repo-root)/backend/../frontend/build` or `$(backend)/../frontend/build` (when started from backend dir)
+- If `frontend/build` is present the backend will serve static assets from that folder and return `index.html` for SPA routes. If no build is found it falls back to `backend/public` or a simple health message.
+
+Examples:
+
+```bash
+# build frontend from repo root
+npm run build
+
+# start backend from repo root (recommended)
+npm run start
+
+# or start backend directly from backend directory (also supported)
+cd backend
+npm start
+```
 ## Containerized deployment (recommended for repeatable deploys)
 1. Create Dockerfiles for both `frontend` and `backend`.
 2. Use a `docker-compose.yml` to build and run both services locally or in production.
