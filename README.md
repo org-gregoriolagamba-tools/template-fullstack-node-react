@@ -15,19 +15,7 @@ Full-stack project template with backend and frontend separated.
 
 ## Getting Started
 
-### Backend
-```bash
-cd backend
-npm install
-npm run dev
-```
-
-### Frontend
-```bash
-cd frontend
-npm install
-npm run dev
-```
+See [Deployment Guide](docs/DEPLOYMENT.md)
 
 ## Usage
 1. Click **Use this template**
