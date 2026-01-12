@@ -10,7 +10,9 @@ function App() {
   useEffect(() => {
     // Create the socket inside the effect so we control lifecycle and
     // avoid creating multiple connections during HMR / hot reload.
-    const socket = io("http://localhost:3001", {
+    const DEFAULT_BACKEND_PORT = 3001;
+    const BACKEND = `${window.location.protocol}//${window.location.hostname}:${DEFAULT_BACKEND_PORT}`;
+    const socket = io(BACKEND, {
       autoConnect: true,
     });
 
