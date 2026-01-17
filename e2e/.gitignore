@@ -1,0 +1,12 @@
+# E2E Test Results
+node_modules/
+reports/
+test-results/
+.auth/
+
+# Environment
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
