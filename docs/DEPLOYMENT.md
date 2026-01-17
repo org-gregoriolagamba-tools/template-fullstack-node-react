@@ -96,7 +96,7 @@ git clone <repository-url>
 cd template-fullstack-node-react
 
 # Install all dependencies
-npm run install-all
+npm run install:all
 
 # Start MongoDB (if using local instance)
 # Option 1: Using Docker
@@ -129,7 +129,7 @@ Build and serve both frontend and backend from a single server:
 
 ```bash
 # 1. Install dependencies
-npm run install-all
+npm run install:all
 
 # 2. Build frontend
 npm run build
